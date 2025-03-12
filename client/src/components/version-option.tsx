@@ -22,7 +22,7 @@ export default function VersionOption({ name, route }: VersionOptionProps) {
   return (
     <button 
       onClick={handleVersionSelect}
-      className="w-full text-white py-2 px-4 text-sm transition-colors duration-200 flex justify-between items-center"
+      className="w-full text-black py-2 px-4 text-sm transition-colors duration-200 flex justify-between items-center"
       style={{ 
         borderRadius: 0, 
         fontFamily: 'sans-serif',
