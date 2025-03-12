@@ -22,23 +22,16 @@ export default function VersionOption({ name, route }: VersionOptionProps) {
   return (
     <button 
       onClick={handleVersionSelect}
-      className="w-full text-black py-2 px-4 text-sm transition-all duration-200 flex justify-between items-center backdrop-blur-sm"
+      className="w-full text-black py-2 px-4 text-sm transition-colors duration-200 flex justify-between items-center"
       style={{ 
         borderRadius: 0, 
         fontFamily: 'sans-serif',
         fontWeight: 300,
         letterSpacing: '0.05em',
-        backgroundColor: 'rgba(141, 169, 202, 0.85)', // Polo blue with transparency
-        boxShadow: 'inset 0 0 15px rgba(255, 255, 255, 0.25)'
+        backgroundColor: '#8da9ca'
       }}
-      onMouseOver={(e) => {
-        e.currentTarget.style.backgroundColor = 'rgba(123, 151, 184, 0.9)';
-        e.currentTarget.style.boxShadow = 'inset 0 0 20px rgba(255, 255, 255, 0.3)';
-      }}
-      onMouseOut={(e) => {
-        e.currentTarget.style.backgroundColor = 'rgba(141, 169, 202, 0.85)';
-        e.currentTarget.style.boxShadow = 'inset 0 0 15px rgba(255, 255, 255, 0.25)';
-      }}
+      onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#7b97b8'}
+      onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#8da9ca'}
     >
       <span>{name}</span>
       <ChevronRight className="h-3 w-3" />
