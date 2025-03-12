@@ -7,10 +7,6 @@ export default function Home() {
       <div className="w-full max-w-md mx-auto">
         <Logo />
         <VersionSelector />
-        
-        <div className="mt-8 text-center text-white text-sm">
-          <p>&copy; {new Date().getFullYear()} HandReceipt. All rights reserved.</p>
-        </div>
       </div>
     </div>
   );
