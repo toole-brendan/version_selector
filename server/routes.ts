@@ -7,9 +7,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // we don't need any specific API routes
   // The frontend routes will be handled by the client-side router
 
-  // You could add health check endpoint if needed
+  // Health check endpoint
   app.get('/api/health', (req, res) => {
     res.json({ status: 'ok' });
+  });
+
+  // Add redirect endpoints for defense and commercial
+  app.get('/defense', (req, res) => {
+    res.redirect('/public/defense/public/index.html');
+  });
+
+  app.get('/commercial', (req, res) => {
+    res.redirect('/public/commercial/public/index.html');
   });
 
   const httpServer = createServer(app);

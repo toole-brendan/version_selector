@@ -11,7 +11,6 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/pitch" component={Pitch} />
-      {/* The /defense and /commercial routes are in separate codebases */}
       <Route component={NotFound} />
     </Switch>
   );

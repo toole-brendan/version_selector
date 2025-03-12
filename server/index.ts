@@ -56,14 +56,45 @@ app.use((req, res, next) => {
     serveStatic(app);
   }
 
-  // ALWAYS serve the app on port 5000
-  // this serves both the API and the client
-  const port = 5000;
-  server.listen({
-    port,
-    host: "0.0.0.0",
-    reusePort: true,
-  }, () => {
-    log(`serving on port ${port}`);
+  // Use dynamic port finding with a fallback to 5000
+  const findAvailablePort = async (startPort: number, maxAttempts = 10): Promise<number> => {
+    const net = await import('net');
+    
+    return new Promise((resolve) => {
+      let currentPort = startPort;
+      let attempts = 0;
+      
+      const tryPort = () => {
+        if (attempts >= maxAttempts) {
+          log(`Could not find an available port after ${maxAttempts} attempts, using default port ${startPort}`);
+          resolve(startPort);
+          return;
+        }
+        
+        const server = net.createServer();
+        server.unref();
+        
+        server.on('error', () => {
+          currentPort++;
+          attempts++;
+          tryPort();
+        });
+        
+        server.listen(currentPort, () => {
+          server.close(() => {
+            resolve(currentPort);
+          });
+        });
+      };
+      
+      tryPort();
+    });
+  };
+
+  const defaultPort = parseInt(process.env.PORT || '5000', 10);
+  const port = await findAvailablePort(defaultPort);
+  
+  server.listen(port, "localhost", () => {
+    log(`🚀 Server running at http://localhost:${port}`);
   });
 })();

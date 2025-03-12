@@ -8,29 +8,58 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-export default defineConfig({
-  plugins: [
-    react(),
-    runtimeErrorOverlay(),
-    themePlugin(),
-    ...(process.env.NODE_ENV !== "production" &&
-    process.env.REPL_ID !== undefined
-      ? [
-          await import("@replit/vite-plugin-cartographer").then((m) =>
-            m.cartographer(),
-          ),
-        ]
-      : []),
-  ],
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "client", "src"),
-      "@shared": path.resolve(__dirname, "shared"),
+export default defineConfig(({ mode }) => {
+  const isProd = mode === 'production';
+  
+  return {
+    plugins: [
+      react(),
+      runtimeErrorOverlay(),
+      themePlugin(),
+      // Remove the complex dynamic import for now, as it's not critical for fixing MIME types
+    ],
+    resolve: {
+      alias: {
+        "@": path.resolve(__dirname, "client", "src"),
+        "@shared": path.resolve(__dirname, "shared"),
+      },
     },
-  },
-  root: path.resolve(__dirname, "client"),
-  build: {
-    outDir: path.resolve(__dirname, "dist/public"),
-    emptyOutDir: true,
-  },
+    // No base prefix in production to match the working deploy-pitch.sh approach
+    base: '/',
+    root: path.resolve(__dirname, "client"),
+    build: {
+      outDir: path.resolve(__dirname, "dist/public"),
+      emptyOutDir: true,
+      rollupOptions: {
+        output: {
+          // Ensure proper module entries with correct content types
+          entryFileNames: 'assets/[name]-[hash].js',
+          chunkFileNames: 'assets/[name]-[hash].js',
+          assetFileNames: 'assets/[name]-[hash].[ext]',
+        }
+      }
+    },
+    server: {
+      // Let Vite find an available port automatically
+      port: 3000,
+      strictPort: false,
+      host: "localhost",
+      // Add proxy for API requests
+      proxy: {
+        '/api': {
+          target: 'http://localhost:5000',
+          changeOrigin: true,
+          rewrite: (path) => path,
+          configure: (proxy, _options) => {
+            proxy.on('proxyReq', (_proxyReq, req, _res, _options) => {
+              console.log(`Proxying ${req.method} ${req.url}`);
+            });
+            proxy.on('error', (err) => {
+              console.log('Proxy error:', err);
+            });
+          },
+        },
+      },
+    },
+  };
 });

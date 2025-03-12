@@ -23,10 +23,18 @@ export function log(message: string, source = "express") {
 }
 
 export async function setupVite(app: Express, server: Server) {
+  // Get the actual port the server is running on
+  const address = server.address();
+  const port = typeof address === 'object' && address !== null ? address.port : 5000;
+  
+  log(`Setting up Vite with server port: ${port}`);
+  
   const serverOptions = {
     middlewareMode: true,
-    hmr: { server },
-    allowedHosts: true,
+    hmr: { 
+      server,
+    },
+    allowedHosts: true as const,
   };
 
   const vite = await createViteServer({
@@ -39,7 +47,15 @@ export async function setupVite(app: Express, server: Server) {
         process.exit(1);
       },
     },
-    server: serverOptions,
+    server: {
+      ...serverOptions,
+      proxy: {
+        '/api': {
+          target: `http://localhost:${port}`,
+          changeOrigin: true,
+        }
+      }
+    },
     appType: "custom",
   });
 
@@ -79,7 +95,21 @@ export function serveStatic(app: Express) {
     );
   }
 
-  app.use(express.static(distPath));
+  // Set proper MIME types for modern JavaScript modules
+  app.use((req, res, next) => {
+    if (req.path.endsWith('.js')) {
+      res.type('application/javascript');
+    }
+    next();
+  });
+
+  app.use(express.static(distPath, {
+    setHeaders: (res, path) => {
+      if (path.endsWith('.js')) {
+        res.set('Content-Type', 'application/javascript');
+      }
+    }
+  }));
 
   // fall through to index.html if the file doesn't exist
   app.use("*", (_req, res) => {
