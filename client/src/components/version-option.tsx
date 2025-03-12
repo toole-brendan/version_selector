@@ -11,8 +11,10 @@ export default function VersionOption({ name, route }: VersionOptionProps) {
 
   const handleVersionSelect = () => {
     // For external routes (in different codebases), we redirect to the full URL
-    if (route === "/defense" || route === "/commercial") {
-      window.location.href = route;
+    if (route === "/defense") {
+      window.location.href = import.meta.env.VITE_DEFENSE_URL || "https://defense.handreceipt.com";
+    } else if (route === "/commercial") {
+      window.location.href = import.meta.env.VITE_COMMERCIAL_URL || "https://commercial.handreceipt.com";
     } else {
       // For internal routes, we use wouter's navigation
       setLocation(route);
