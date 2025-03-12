@@ -22,8 +22,13 @@ export default function VersionOption({ name, route }: VersionOptionProps) {
   return (
     <button 
       onClick={handleVersionSelect}
-      className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 text-sm font-medium transition-colors duration-200 flex justify-between items-center"
-      style={{ borderRadius: 0 }}
+      className="w-full bg-blue-700 hover:bg-blue-800 text-white py-2 px-4 text-sm transition-colors duration-200 flex justify-between items-center"
+      style={{ 
+        borderRadius: 0, 
+        fontFamily: 'sans-serif',
+        fontWeight: 300,
+        letterSpacing: '0.05em'
+      }}
     >
       <span>{name}</span>
       <ChevronRight className="h-3 w-3" />
