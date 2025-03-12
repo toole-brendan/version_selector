@@ -8,16 +8,12 @@ export default function VersionSelector() {
   ];
 
   return (
-    <div className="bg-white border border-gray-300 shadow-sm p-6">
-      <h2 className="text-xl font-semibold text-gray-800 mb-6 text-center">Select Version</h2>
-      
-      <div className="flex flex-col">
-        {versions.map((version) => (
-          <div key={version.route} className="border border-gray-300 mb-0">
-            <VersionOption name={version.name} route={version.route} />
-          </div>
-        ))}
-      </div>
+    <div className="flex flex-col space-y-5">
+      {versions.map((version) => (
+        <div key={version.route} className="border border-gray-300">
+          <VersionOption name={version.name} route={version.route} />
+        </div>
+      ))}
     </div>
   );
 }
