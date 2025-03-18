@@ -26,7 +26,7 @@ export default function VersionOption({ name, route }: VersionOptionProps) {
   return (
     <button 
       onClick={handleVersionSelect}
-      className="w-full text-white py-2 px-4 text-sm transition-colors duration-200 flex justify-between items-center border border-white font-sans font-light tracking-wider bg-[#001f3f] hover:bg-[#0033a0]"
+      className="w-full text-white py-2 px-4 text-sm transition-colors duration-200 flex justify-between items-center border border-white font-sans font-light tracking-wider bg-[#495D87] hover:bg-[#3E5BA8]"
     >
       <span>{name}</span>
       <ChevronRight className="h-3 w-3" />

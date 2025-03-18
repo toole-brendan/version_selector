@@ -6,7 +6,8 @@ import { createServer as createViteServer, createLogger } from "vite";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 import { type Server } from "http";
-import viteConfig from "../vite.config";
+import viteConfigFn from "../vite.config";
+import react from "@vitejs/plugin-react";
 import { nanoid } from "nanoid";
 
 const viteLogger = createLogger();
@@ -37,8 +38,15 @@ export async function setupVite(app: Express, server: Server) {
     allowedHosts: true as const,
   };
 
+  // We need to handle viteConfig differently as it's a function that returns a config object
+  // No need to try to merge with viteConfig, as we'll provide all necessary settings directly
+
+  // Get Vite config for development mode
+  const viteConfigObj = typeof viteConfigFn === 'function' 
+    ? viteConfigFn({ mode: 'development', command: 'serve' }) 
+    : viteConfigFn;
+
   const vite = await createViteServer({
-    ...viteConfig,
     configFile: false,
     customLogger: {
       ...viteLogger,
@@ -47,6 +55,14 @@ export async function setupVite(app: Express, server: Server) {
         process.exit(1);
       },
     },
+    resolve: {
+      alias: {
+        "@": path.resolve(__dirname, "..", "client", "src"),
+        "@shared": path.resolve(__dirname, "..", "shared"),
+      },
+    },
+    base: '/',
+    root: path.resolve(__dirname, "..", "client"),
     server: {
       ...serverOptions,
       proxy: {
@@ -57,6 +73,15 @@ export async function setupVite(app: Express, server: Server) {
       }
     },
     appType: "custom",
+    plugins: viteConfigObj.plugins || [react()]
+  });
+
+  // Set proper MIME types for TypeScript files
+  app.use((req, res, next) => {
+    if (req.path.endsWith('.tsx') || req.path.endsWith('.ts')) {
+      res.type('application/javascript');
+    }
+    next();
   });
 
   app.use(vite.middlewares);
@@ -73,10 +98,9 @@ export async function setupVite(app: Express, server: Server) {
 
       // always reload the index.html file from disk incase it changes
       let template = await fs.promises.readFile(clientTemplate, "utf-8");
-      template = template.replace(
-        `src="/src/main.tsx"`,
-        `src="/src/main.tsx?v=${nanoid()}"`,
-      );
+      
+      // Don't append a random query param to avoid file resolution issues
+      // Just use the path as is from the template
       const page = await vite.transformIndexHtml(url, template);
       res.status(200).set({ "Content-Type": "text/html" }).end(page);
     } catch (e) {
