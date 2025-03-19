@@ -12,13 +12,16 @@ export default function VersionOption({ name, route }: VersionOptionProps) {
   const handleVersionSelect = () => {
     // For defense and commercial routes, redirect to the separate applications
     if (route === "/defense") {
-      // Direct routing to the actual index.html file
-      window.location.href = "/defense/index.html";
+      // Direct routing to the defense directory
+      window.location.href = "/defense/";
     } else if (route === "/commercial") {
-      // Direct routing to the actual index.html file
-      window.location.href = "/commercial/index.html";
+      // Direct routing to the commercial directory
+      window.location.href = "/commercial/";
+    } else if (route === "/pitch") {
+      // Direct routing to the pitch directory
+      window.location.href = "/pitch/";
     } else {
-      // For internal routes like pitch, use wouter's navigation
+      // For other internal routes, use wouter's navigation
       setLocation(route);
     }
   };
