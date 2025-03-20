@@ -17,7 +17,7 @@ export default function VersionSelector() {
           </div>
         ))}
       </div>
-      <p className="text-white text-center text-sm font-sans font-light tracking-wider uppercase mt-6">toole.brendan@gmail.com</p>
+      <p className="text-white text-center text-sm font-sans font-light tracking-wider uppercase mt-6">brendan.toole@handreceipt.com</p>
     </div>
   );
 }
